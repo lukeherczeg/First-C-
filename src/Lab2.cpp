@@ -181,11 +181,11 @@ int main()
 
 	while(!completed)
 	{
-		int size = 0;
-		cout << "INPUT>> Enter the size of a magic square: ";
+		double size = 0;  // Created as a double so that extremely large input won't crash or cause an infinite loop,
+		cout << "INPUT>> Enter the size of a magic square: ";            // however size is still used as an integer.
 		cin >> size;
 
-		if((size % 2 == 1) && (size > 1) && (size < 16))
+		if(((int)size % 2 == 1) && (size > 1) && (size < 16))
 		{
 			Matrix *m = new Matrix(size);
 			Matrix *m2 = new Matrix(size);
@@ -256,36 +256,3 @@ int main()
 	}
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-/*void swap(int* ints, int i1, int i2)
-{
-	int temp = ints[i1];
-	ints[i1] = ints[i2];
-	ints[i2] = temp;
-}*/
-/*public Fraction* Fraction::add(Fraction &f)
- * {
- * 	int num = numerator * f.denominator;
- * 	num += f.numerator * denominatior;
- * 	int dnm = f.denominator * denominator;
- * 	return new Fraction(num, dnm);
- * }
- */
-//to delete
-/*for(int k = 0; k<size; k++)
-{
-	delete [] a[k];
-}
-
-delete [] a;*/
-
