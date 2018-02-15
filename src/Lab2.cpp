@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include <iomanip>
 #include "Lab2.h"
 using namespace std;
 
@@ -29,10 +30,17 @@ void Matrix::set(int row, int column, int value){
 
 void Matrix::print()
 {
-	for(int i=0; i<size; i++)
+	for(int i=0; i < size; i++)
 	{
 		for(int j = 0; j < size; j++)
-			cout << matrix[i][j] << " ";
+		{
+			if(matrix[i][j] < 10)
+				printf("  %d  ", matrix[i][j]);
+			else if(matrix[i][j] < 100)
+				printf("  %d ", matrix[i][j]);
+			else
+				printf("  %d", matrix[i][j]);
+		}
 		cout << "\n";
 	}
 }
@@ -67,28 +75,49 @@ int Matrix::sumDiag2()
 	for(int i = 0; i < size; i++)
 		sum += matrix[size - 1 - i][i];
 	return sum;
-
 }
 
 void Matrix::transposeDiag1(Matrix *m){
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
 			matrix[i][j] = (*m).get(j,i);
-}
+}																	//Diag1 is the main diagonal of the matrix (decreases vertically from left to right)
 
-void Matrix::transposeDiag2(Matrix *m){
+void Matrix::transposeDiag2(Matrix *m){								//Diag2 is the diagonal that advances vertically from left to right
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
-			matrix[i][j] = (*m).get(size - 1 - j,size - 1 - i);
+			matrix[i][j] = (*m).get(size - 1 - j, size - 1 - i);
 }
 
 void Matrix::mirrorBottomRight(Matrix *m){
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
-			matrix[i][j] = (*m).get(size - 1 - i,size - 1 - j);
+			matrix[i][j] = (*m).get(size - 1 - i, size - 1 - j);
 }
 
-void Matrix::checkIt()
+void Matrix::flipOverVerticalMid(Matrix *m)
+{
+	int halfPoint = ceil(size/2);
+	for(int i = 0; i < size; i++)
+		for(int j = 0; j < size; j++)
+		{
+			int diff = halfPoint - j;
+			matrix[i][j] = (*m).get(i, halfPoint + diff);
+		}
+}
+
+void Matrix::flipOverHorizontalMid(Matrix *m)
+{
+	int halfPoint = ceil(size/2);
+	for(int i = 0; i < size; i++)
+		for(int j = 0; j < size; j++)
+		{
+			int diff = halfPoint - i;
+			matrix[i][j] = (*m).get(halfPoint + diff, j);
+		}
+}
+
+void Matrix::check()
 {
 	if(this->isMagic())
 		cout << "\nMAGIC" << endl;
@@ -124,9 +153,10 @@ void Matrix::fillWithMagic()
 	{
 		for(int j = 0; j < size; j++)
 		{
-			numAtPos = n * ((int)((i + 1) + (j + 1) - 1 + floor(n / 2)) % n)  // Formula that creates a number for each position in a magic square of size n
-					     + (((i + 1) + (2 * (j + 1)) - 2) % n) + 1;
+			numAtPos = (n * ((int)((i + 1) + (j + 1) - 1 + floor(n / 2)) % n)  // Formula that creates a number for each position in a magic square of size n
+					     	 + ( ( (i + 1) + (2 * (j + 1) ) - 2) % n) + 1);
 
+			numAtPos = (n*((int)((i+1)+(j+1)-1+floor(n/2))%n)+(((i+1)+(2*(j+1))-2)%n)+1);
 			matrix[i][j] = numAtPos;
 		}
 	}
@@ -139,34 +169,64 @@ int main() {
 		int size = 0;
 		cout << "Enter an odd number size 3 - 15 as the size of the matrix (n X n) : ";
 		cin >> size;
-		if((size % 2 == 1) && (size > 1) && (size < 16))
+		if((size % 2 == 1) && (size > 1)/* && (size < 16)*/ )
 		{
 			Matrix *m = new Matrix(size);
 			Matrix *m2 = new Matrix(size);
+			Matrix *m3 = new Matrix(size);
 
 			cout << endl;
+
 			m->fillWithMagic(); // 1
 			m->print();
-			m->checkIt();
+			m->check();
 
 			m2->transposeDiag1(m); // 2
 			m2->print();
-			m2->checkIt();
+			m2->check();
 
 			m2->transposeDiag2(m);  // 3
 			m2->print();
-			m2->checkIt();
+			m2->check();
 
 			m2->mirrorBottomRight(m); // 4
 			m2->print();
-			m2->checkIt();
+			m2->check();
 
+			m2->flipOverVerticalMid(m); // 5
+			m2->print();
+			m2->check();
+
+			m2->flipOverHorizontalMid(m); // 6
+			m2->print();
+			m2->check();
+
+			m2->transposeDiag2(m); // 7
+			m3->flipOverVerticalMid(m2);
+			m3->print();
+			m3->check();
+
+			m2->transposeDiag1(m); // 8
+			m3->flipOverVerticalMid(m2);
+			m3->print();
+			m3->check();
+
+			/*if(size > 3)
+			{
+				m2->mirrorBottomRight(m);
+				m3->flipOverHorizontalMid(m2);
+				m3->print();
+				m3->check();
+			}*/
 
 			delete m;
 			m = NULL;
 
 			delete m2;
 			m2 = NULL;
+
+			delete m3;
+			m3 = NULL;
 
 
 			completed = true;

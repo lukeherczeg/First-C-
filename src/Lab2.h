@@ -16,8 +16,10 @@ class Matrix{
 		void transposeDiag1(Matrix *m);
 		void transposeDiag2(Matrix *m);
 		void mirrorBottomRight(Matrix *m);
+		void flipOverVerticalMid(Matrix *m);
+		void flipOverHorizontalMid(Matrix *m);
 		void fillWithMagic();
-		void checkIt();
+		void check();
 		int sumHoriz(int row);
 		int sumVert(int column);
 		int sumDiag();
