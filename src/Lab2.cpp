@@ -1,6 +1,5 @@
 #include <iostream>
 #include <math.h>
-#include <iomanip>
 #include "Lab2.h"
 using namespace std;
 
@@ -13,39 +12,56 @@ Matrix::Matrix(int size)
 }
 
 Matrix::~Matrix(){
-	cout << "\nHelp, I'm being destroyed!\n-matrix Bob" << endl;
 	for(int i = 0; i < size; i++)
 		delete [] matrix[i];
 	delete [] matrix;
 	matrix = NULL;
 }
 
+bool Matrix::isMagic()
+{
+	int sum = size * (ceil(( pow(size,2) + 1 ) / 2));
+	int verify = 0;
+	for(int y = 0; y < size; y++)
+		if((this->sumHoriz(y) == sum) && (this->sumVert(y) == sum) && (this->sumDiag() == sum) && (this->sumDiag2() == sum))
+			verify++;
+	if(verify == size)
+		return true;
+	return false;
+}
+
 int Matrix::get(int row, int column){
 	return matrix[row][column];
 }
 
-void Matrix::set(int row, int column, int value){
-	matrix[row][column] = value;
-}
-
-void Matrix::print()
+void Matrix::print()  //prints the matrix, using printf(), accounts for spacing of numbers with different digits
 {
 	for(int i=0; i < size; i++)
 	{
 		for(int j = 0; j < size; j++)
 		{
-			if(matrix[i][j] < 10)
-				printf("  %d  ", matrix[i][j]);
-			else if(matrix[i][j] < 100)
-				printf("  %d ", matrix[i][j]);
+			if(size < 11)
+			{
+				if(matrix[i][j] < 10)
+					printf("  %d ", matrix[i][j]);
+				else
+					printf("  %d", matrix[i][j]);
+			}
 			else
-				printf("  %d", matrix[i][j]);
+			{
+				if(matrix[i][j] < 10)
+					printf("  %d  ", matrix[i][j]);
+				else if(matrix[i][j] < 100)
+					printf("  %d ", matrix[i][j]);
+				else
+					printf("  %d", matrix[i][j]);
+			}
 		}
 		cout << "\n";
 	}
 }
 
-int Matrix::sumHoriz(int row)
+int Matrix::sumHoriz(int row)  //calculates the sum of a row
 {
 	int sum = 0;
 	for(int i = 0; i < size; i++)
@@ -77,25 +93,28 @@ int Matrix::sumDiag2()
 	return sum;
 }
 
-void Matrix::transposeDiag1(Matrix *m){
+void Matrix::transposeDiag1(Matrix *m)
+{
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
 			matrix[i][j] = (*m).get(j,i);
 }																	//Diag1 is the main diagonal of the matrix (decreases vertically from left to right)
 
-void Matrix::transposeDiag2(Matrix *m){								//Diag2 is the diagonal that advances vertically from left to right
+void Matrix::transposeDiag2(Matrix *m)								//Diag2 is the diagonal that advances vertically from left to right
+{
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
 			matrix[i][j] = (*m).get(size - 1 - j, size - 1 - i);
 }
 
-void Matrix::mirrorBottomRight(Matrix *m){
+void Matrix::mirrorBottomRight(Matrix *m)
+{
 	for(int i = 0; i < size; i++)
 		for(int j = 0; j < size; j++)
 			matrix[i][j] = (*m).get(size - 1 - i, size - 1 - j);
 }
 
-void Matrix::flipOverVerticalMid(Matrix *m)
+void Matrix::flipOverMiddleRow(Matrix *m)
 {
 	int halfPoint = ceil(size/2);
 	for(int i = 0; i < size; i++)
@@ -106,7 +125,7 @@ void Matrix::flipOverVerticalMid(Matrix *m)
 		}
 }
 
-void Matrix::flipOverHorizontalMid(Matrix *m)
+void Matrix::flipOverMiddleCol(Matrix *m)
 {
 	int halfPoint = ceil(size/2);
 	for(int i = 0; i < size; i++)
@@ -119,57 +138,54 @@ void Matrix::flipOverHorizontalMid(Matrix *m)
 
 void Matrix::check()
 {
-	if(this->isMagic())
+	/*if(this->isMagic())
 		cout << "\nMAGIC" << endl;
 	else
-		cout << "\nNONMAGIC" << endl;
-
-	cout << "\n" <<"Checking the sums of every row:      ";
+		cout << "\nNONMAGIC" << endl;*/
+	cout << "\n" <<"OUTPUT>> Checking the sums of every row:      ";
 	for(int i = 0; i < size; i++)
 		cout << this->sumHoriz(i) << " ";
-	cout << "\n" <<"Checking the sums of every column:   ";
+	cout << "\n" <<"OUTPUT>> Checking the sums of every column:   ";
 	for(int i = 0; i < size; i++)
 		cout << this->sumVert(i) << " ";
-	cout << "\n" << "Checking the sums of every diagonal: " << this->sumDiag() << " " << this->sumDiag2() << "\n" <<endl;
-}
-
-bool Matrix::isMagic()
-{
-	int sum = size * (ceil(( pow(size,2) + 1 ) / 2));
-	int verify = 0;
-	for(int y = 0; y < size; y++)
-		if((this->sumHoriz(y) == sum) && (this->sumVert(y) == sum) && (this->sumDiag() == sum) && (this->sumDiag2() == sum))
-			verify++;
-	if(verify == size)
-		return true;
-	return false;
+	cout << "\n" << "OUTPUT>> Checking the sums of every diagonal: " << this->sumDiag() << " " << this->sumDiag2() << "\n" <<endl;
 }
 
 void Matrix::fillWithMagic()
 {
 	int n = size;
-	int numAtPos;
+	int magicNum;
 	for(int i = 0; i < size; i++)
 	{
 		for(int j = 0; j < size; j++)
 		{
-			numAtPos = (n * ((int)((i + 1) + (j + 1) - 1 + floor(n / 2)) % n)  // Formula that creates a number for each position in a magic square of size n
-					     	 + ( ( (i + 1) + (2 * (j + 1) ) - 2) % n) + 1);
+			magicNum = (n * ((int)((i + 1) + (j + 1) - 1 + floor(n / 2)) % n)  // Formula that creates a number for each position in a magic square of size n
+					     	 + ( ( (i + 1) + (2 * (j + 1) ) - 2) % n) + 1);    // courtesy of/interpreted from :: https://en.wikipedia.org/wiki/Magic_square
 
-			numAtPos = (n*((int)((i+1)+(j+1)-1+floor(n/2))%n)+(((i+1)+(2*(j+1))-2)%n)+1);
-			matrix[i][j] = numAtPos;
+			matrix[i][j] = magicNum;
 		}
 	}
 }
 
-int main() {
+void printNum(int num)
+{
+	cout << "OUTPUT>> Magic Square #" << num << " is: \n" << endl;
+}
+
+
+int main()
+{
 	bool completed = false;
+	int magicSquareNum = 1;
+	int & mSN = magicSquareNum;
+
 	while(!completed)
 	{
 		int size = 0;
-		cout << "Enter an odd number size 3 - 15 as the size of the matrix (n X n) : ";
+		cout << "INPUT>> Enter the size of a magic square: ";
 		cin >> size;
-		if((size % 2 == 1) && (size > 1)/* && (size < 16)*/ )
+
+		if((size % 2 == 1) && (size > 1) && (size < 16))
 		{
 			Matrix *m = new Matrix(size);
 			Matrix *m2 = new Matrix(size);
@@ -177,47 +193,48 @@ int main() {
 
 			cout << endl;
 
-			m->fillWithMagic(); // 1
-			m->print();
+			printNum(mSN);
+			m->fillWithMagic(); // Create the first magic square, always starts with a 1 at the middle column in the first row
+			m->print(); mSN++;
 			m->check();
 
-			m2->transposeDiag1(m); // 2
-			m2->print();
+			printNum(mSN);
+			m2->transposeDiag1(m); // The second will be the transposition of the first square over the first(main) diagonal
+			m2->print(); mSN++;
+			m2->check();		   // NOTE :: I explain the meaning of the first and second diagonal near the function itself
+
+			printNum(mSN);
+			m2->transposeDiag2(m);  // The third will be the transposition of the first square over the second diagonal
+			m2->print(); mSN++;
 			m2->check();
 
-			m2->transposeDiag2(m);  // 3
-			m2->print();
+			printNum(mSN);
+			m2->mirrorBottomRight(m); // The fourth will be the first square mirrored over it's bottom right corner
+			m2->print(); mSN++;
 			m2->check();
 
-			m2->mirrorBottomRight(m); // 4
-			m2->print();
+			printNum(mSN);
+			m2->flipOverMiddleRow(m); // The fifth will be the first square with positions relative to the middle row swapped.
+			m2->print(); mSN++;
 			m2->check();
 
-			m2->flipOverVerticalMid(m); // 5
-			m2->print();
+			printNum(mSN);
+			m2->flipOverMiddleCol(m); // The sixth will be the first square with positions relative to the middle column swapped.
+			m2->print(); mSN++;
 			m2->check();
 
-			m2->flipOverHorizontalMid(m); // 6
-			m2->print();
-			m2->check();
-
-			m2->transposeDiag2(m); // 7
-			m3->flipOverVerticalMid(m2);
-			m3->print();
+			printNum(mSN);
+			m2->transposeDiag1(m);     // The seventh with be the first square transposed over the first(main) diagonal, and then
+			m3->flipOverMiddleRow(m2); // the resulting square's positions relative to the middle column will be swapped.
+			m3->print(); mSN++;
 			m3->check();
 
-			m2->transposeDiag1(m); // 8
-			m3->flipOverVerticalMid(m2);
-			m3->print();
+			printNum(mSN);
+			m2->transposeDiag2(m);     // The eighth with be the first square transposed over the second diagonal, and then
+			m3->flipOverMiddleRow(m2); // the resulting square's positions relative to the middle column will be swapped.
+			m3->print(); mSN++;
 			m3->check();
 
-			/*if(size > 3)
-			{
-				m2->mirrorBottomRight(m);
-				m3->flipOverHorizontalMid(m2);
-				m3->print();
-				m3->check();
-			}*/
 
 			delete m;
 			m = NULL;
@@ -233,7 +250,7 @@ int main() {
 		}
 		else
 		{
-			cout << "Error! ";
+			cout << "OUTPUT>> Error! Enter an odd number size 3 - 15!" << endl;
 			size = 0;
 		}
 	}

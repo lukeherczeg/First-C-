@@ -6,20 +6,21 @@ class Matrix{
 		int size;
 		int ** matrix;  //array that contains references to other arrays
 	public:
-
 		Matrix(int size);
 		~Matrix();
+
 		bool isMagic();
-		int get(int row, int column);
-		void set(int row, int column, int value);
+
 		void print();
 		void transposeDiag1(Matrix *m);
 		void transposeDiag2(Matrix *m);
 		void mirrorBottomRight(Matrix *m);
-		void flipOverVerticalMid(Matrix *m);
-		void flipOverHorizontalMid(Matrix *m);
+		void flipOverMiddleCol(Matrix *m);
+		void flipOverMiddleRow(Matrix *m);
 		void fillWithMagic();
 		void check();
+
+		int get(int row, int column);
 		int sumHoriz(int row);
 		int sumVert(int column);
 		int sumDiag();
