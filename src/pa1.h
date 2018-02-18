@@ -1,5 +1,5 @@
-#ifndef LAB2_H_
-#define LAB2_H_
+#ifndef PA1_H_
+#define PA1_H_
 
 class Matrix{
 	private:
@@ -16,15 +16,17 @@ class Matrix{
 		void transposeDiag2(Matrix *m);
 		void mirrorBottomRight(Matrix *m);
 		void flipOverMiddleCol(Matrix *m);
+		void flipOneColOverMiddle(Matrix *m);
 		void flipOverMiddleRow(Matrix *m);
 		void fillWithMagic();
 		void check();
+		void printNum(int num);
 
 		int get(int row, int column);
 		int sumHoriz(int row);
 		int sumVert(int column);
-		int sumDiag();
+		int sumDiag1();
 		int sumDiag2();
 	};
 
-#endif /* LAB2_H_ */
+#endif /* PA1_H_ */
