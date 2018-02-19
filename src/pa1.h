@@ -23,8 +23,8 @@ class Matrix{
 		void printNum(int num);
 
 		int get(int row, int column);
-		int sumHoriz(int row);
-		int sumVert(int column);
+		int sumRow(int row);
+		int sumColumn(int column);
 		int sumDiag1();
 		int sumDiag2();
 	};
